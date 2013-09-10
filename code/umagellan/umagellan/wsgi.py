@@ -14,6 +14,14 @@ framework.
 
 """
 import os
+import sys
+
+path = '/opt/webfiles_django'
+if path not in sys.path:
+    sys.path.append(path)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "faa_consensus.settings")
+
 
 # We defer to a DJANGO_SETTINGS_MODULE already in the environment. This breaks
 # if running multiple sites in the same mod_wsgi process. To fix this, use
