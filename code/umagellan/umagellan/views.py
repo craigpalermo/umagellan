@@ -2,21 +2,21 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext, loader
-from UMagellan.models import Course, Spot
+from umagellan.models import Course, Spot
 from bs4 import BeautifulSoup
 import urllib2
 import json
-# from UMagellan.models import Route
-from UMagellan.forms import UserForm
+# from umagellan.models import Route
+from umagellan.forms import UserForm
 from django.views.generic.base import View
-from UMagellan.models import Spot
+from umagellan.models import Spot
 from dateutil import parser
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from models import UserProfile
 
 # views go here
-def index(request):
+def HomePage(request):
     courses = Course.objects.filter(user = request.user.id)
     routes = None
     spots = Spot.objects.filter(user = request.user.id)

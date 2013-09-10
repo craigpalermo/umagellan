@@ -1,30 +1,23 @@
-# Django settings for UMagellan project.
+# Django settings for umagellan project.
 
 import os
+from umagellan.environments import development as current_environment
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
-PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+# BEGIN IMPORTING ENVIRONMENT VARIABLES
+DEBUG = current_environment.DEBUG
+TEMPLATE_DEBUG = current_environment.TEMPLATE_DEBUG
+PROJECT_PATH = current_environment.PROJECT_PATH
+DATABASES = current_environment.DATABASES
+SITE_ROOT = current_environment.SITE_ROOT
+# END IMPORTING ENVIRONMENT VARIABLES
 
-AUTH_PROFILE_MODULE = "UMagellan.UserProfile"
+AUTH_PROFILE_MODULE = "umagellan.UserProfile"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'umagellan.db',                      # Or path to database file if using sqlite3.
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
-    }
-}
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -118,10 +111,10 @@ AUTHENTICATION_BACKENDS = (
 CAS_SERVER_URL = 'https://login.umd.edu/cas/'
 CAS_REDIRECT_URL = '/#'
 
-ROOT_URLCONF = 'UMagellan.urls'
+ROOT_URLCONF = 'umagellan.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'UMagellan.wsgi.application'
+WSGI_APPLICATION = 'umagellan.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -141,7 +134,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'UMagellan',
+    'umagellan',
     'south',
 )
 
