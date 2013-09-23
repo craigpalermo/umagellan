@@ -16,7 +16,7 @@ framework.
 import os
 import sys
 
-path = '/opt/daemondash/code/umagellan'
+path = '/var/opt/daemondash/code/umagellan'
 if path not in sys.path:
     sys.path.append(path)
 

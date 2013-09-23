@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from umagellan.views import HomePage, UserCreate, SetHome
 from django.contrib.auth.decorators import login_required
+from umagellan.settings import SITE_ROOT
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -8,8 +9,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Load index page
-    url(r'^$', HomePage, name='home'),
-    
+    url(r'^' + SITE_ROOT + '$', HomePage, name='home'),
+        
     # Course Actions
     url(r'^add_course', 'umagellan.views.add_course'),
     url(r'^get_course', 'umagellan.views.get_course'),
