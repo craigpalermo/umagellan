@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
-from umagellan.views import HomePage, UserCreate, SetHome
-from django.contrib.auth.decorators import login_required
-from umagellan.settings import SITE_ROOT
+from views import HomePage, UserCreate
+from settings import SITE_ROOT
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin

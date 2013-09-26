@@ -1,7 +1,7 @@
 # Django settings for umagellan project.
 
 import os
-from umagellan.environments import production as current_environment
+from environments import development as current_environment
 
 # BEGIN IMPORTING ENVIRONMENT VARIABLES
 DEBUG = current_environment.DEBUG
@@ -9,19 +9,16 @@ TEMPLATE_DEBUG = current_environment.TEMPLATE_DEBUG
 PROJECT_PATH = current_environment.PROJECT_PATH
 DATABASES = current_environment.DATABASES
 SITE_ROOT = current_environment.SITE_ROOT
+ALLOWED_HOSTS = current_environment.ALLOWED_HOSTS
 # END IMPORTING ENVIRONMENT VARIABLES
 
-AUTH_PROFILE_MODULE = "umagellan.UserProfile"
+AUTH_PROFILE_MODULE = "UserProfile"
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
-
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['.craigpalermo.com']
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -44,7 +41,7 @@ USE_I18N = True
 USE_L10N = True
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/var/www/example.com/media/"
