@@ -17,17 +17,26 @@ import os
 import sys
 import site
 
-# Add the site-packages of the chosen virtualenv to work with
+# # Add the site-packages of the chosen virtualenv to work with
+# site.addsitedir('~/.virtualenvs/umagellan/lib/python2.6/site-packages')
+# 
+# # Add the app's directory to the PYTHONPATH
+# sys.path.append('/var/webfiles_django/umagellan')
+# 
+# os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
+# 
+# # Activate your virtual env
+# activate_env=os.path.expanduser("~/.virtualenvs/umagellan/bin/activate_this.py")
+# execfile(activate_env, dict(__file__=activate_env))
+
+# set up python path and virtualenv
 site.addsitedir('~/.virtualenvs/umagellan/lib/python2.6/site-packages')
-
-# Add the app's directory to the PYTHONPATH
 sys.path.append('/var/webfiles_django/umagellan')
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
-
-# Activate your virtual env
-activate_env=os.path.expanduser("~/.virtualenvs/umagellan/bin/activate_this.py")
-execfile(activate_env, dict(__file__=activate_env))
+ 
+# django WSGI specifics
+from django.core.handlers.wsgi import WSGIHandler
+os.environ['DJANGO_SETTINGS_MODULE'] = 'umagellan.settings'
+application = WSGIHandler()
 
 # path = '/var/webfiles_django/umagellan'
 # if path not in sys.path:
@@ -42,8 +51,8 @@ execfile(activate_env, dict(__file__=activate_env))
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
-from django.core.wsgi import get_wsgi_application
-application = get_wsgi_application()
+# from django.core.wsgi import get_wsgi_application
+# application = get_wsgi_application()
 
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
