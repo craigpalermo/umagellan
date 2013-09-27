@@ -1,7 +1,7 @@
 # Django settings for umagellan project.
 
 import os
-from environments import production as current_environment
+from environments import development as current_environment
 
 # BEGIN IMPORTING ENVIRONMENT VARIABLES
 DEBUG = current_environment.DEBUG
@@ -111,7 +111,7 @@ CAS_REDIRECT_URL = '/#'
 ROOT_URLCONF = 'umagellan.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'wsgi.application'
+WSGI_APPLICATION = 'umagellan.wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

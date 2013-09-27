@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from views import HomePage, UserCreate
+from umagellan.views import HomePage, UserCreate
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -10,10 +10,10 @@ urlpatterns = patterns('',
     url(r'^$', HomePage, name='home'),
         
     # Course Actions
-    url(r'^add_course', 'views.add_course'),
-    url(r'^get_course', 'views.get_course'),
-    url(r'^delete_course/(?P<course_id>\d+)/', 'views.delete_course'),
-    url(r'^delete_all_courses/$', 'views.delete_all_courses', name='delete_all_courses'),
+    url(r'^add_course', 'umagellan.views.add_course'),
+    url(r'^get_course', 'umagellan.views.get_course'),
+    url(r'^delete_course/(?P<course_id>\d+)/', 'umagellan.views.delete_course'),
+    url(r'^delete_all_courses/$', 'umagellan.views.delete_all_courses', name='delete_all_courses'),
 
     # Admin views
     url(r'^admin/', include(admin.site.urls)),
@@ -24,5 +24,5 @@ urlpatterns = patterns('',
     
     # User Actions
     url(r'^user/create/$', UserCreate.as_view(), name = 'user_create_page'),
-    url(r'^user/sethome/$', 'views.SetHome', name = 'set_user_home'),
+    url(r'^user/sethome/$', 'umagellan.views.SetHome', name = 'set_user_home'),
 )
