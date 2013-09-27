@@ -1,7 +1,7 @@
 # Django settings for umagellan project.
 
 import os
-from environments import development as current_environment
+from environments import production as current_environment
 
 # BEGIN IMPORTING ENVIRONMENT VARIABLES
 DEBUG = current_environment.DEBUG
