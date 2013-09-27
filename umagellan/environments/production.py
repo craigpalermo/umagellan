@@ -1,7 +1,7 @@
 import os
 
-DEBUG = True
-TEMPLATE_DEBUG = True
+DEBUG = False
+TEMPLATE_DEBUG = False
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 SITE_ROOT = '' 

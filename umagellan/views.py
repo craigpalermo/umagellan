@@ -10,7 +10,7 @@ from forms import UserForm
 from django.views.generic.base import View
 from dateutil import parser
 from django.core.exceptions import ObjectDoesNotExist
-from models import UserProfile
+from umagellan.models import UserProfile
 
 # views go here
 def HomePage(request):

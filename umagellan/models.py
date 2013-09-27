@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime import datetime
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
@@ -21,7 +20,7 @@ class Course(models.Model):
     tag = models.CharField(max_length=56, null=True)
     link = models.CharField(max_length=1024)
     def __unicode__(self):
-      return self.name
+        return self.name
 
     
 # # the route that the user will take from start_location to end_location
