@@ -17,18 +17,6 @@ import os
 import sys
 import site
 
-# # Add the site-packages of the chosen virtualenv to work with
-# site.addsitedir('~/.virtualenvs/umagellan/lib/python2.6/site-packages')
-# 
-# # Add the app's directory to the PYTHONPATH
-# sys.path.append('/var/webfiles_django/umagellan')
-# 
-# os.environ['DJANGO_SETTINGS_MODULE'] = 'myproject.settings'
-# 
-# # Activate your virtual env
-# activate_env=os.path.expanduser("~/.virtualenvs/umagellan/bin/activate_this.py")
-# execfile(activate_env, dict(__file__=activate_env))
-
 # set up python path and virtualenv
 site.addsitedir('~/.virtualenvs/umagellan/lib/python2.6/site-packages')
 sys.path.append('/var/webfiles_django/umagellan')
