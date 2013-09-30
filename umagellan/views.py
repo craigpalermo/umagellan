@@ -2,18 +2,19 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from django.template import RequestContext
+from django.core.exceptions import ObjectDoesNotExist
 from models import Course
 from bs4 import BeautifulSoup
-import urllib2
-import json
 from forms import UserForm
 from django.views.generic.base import View
 from dateutil import parser
-from django.core.exceptions import ObjectDoesNotExist
 from umagellan.models import UserProfile
+from api.scraper import Scraper
+import urllib2
+import json
 
-# views go here
-def HomePage(request):
+
+def home_page_view(request):
     courses = Course.objects.filter(user = request.user.id)
     routes = None
     days = [('Monday', 'M'), ('Tuesday', 'Tu'), ('Wednesday', 'W'), ('Thursday', 'Th'), ('Friday', 'F') ]
@@ -33,7 +34,7 @@ def HomePage(request):
         {'courses': courses, 'routes': routes, 'user': user, 'days': days, 'home': home}, 
         context_instance = RequestContext(request))
 
-def SetHome(request):
+def set_home(request):
     if request.method == 'POST':
         try:
             profile = UserProfile.objects.get(user=request.user)
@@ -47,10 +48,11 @@ def SetHome(request):
     return render(request, 'index.html', None, context_instance = RequestContext(request))
         
 
-'''    
-form to create/register new user
-'''
-class UserCreate(View):
+
+class create_user(View):
+    '''    
+    form to create/register new user
+    '''
     form_class = UserForm
     template_name = 'user_create.html'
     
@@ -77,10 +79,11 @@ class UserCreate(View):
 
         return render(request, self.template_name, {'form': form}, context_instance = RequestContext(request))
 
-'''
-delete a course object from the database
-'''
+
 def delete_course(request, course_id):
+    '''
+    delete a course object from the database
+    '''
     try:
         course = Course.objects.get(id=course_id)
         course.delete()
@@ -88,22 +91,24 @@ def delete_course(request, course_id):
         pass # course doesn't exist
     return HttpResponse("Course deleted successfully") # redirect back to home page
 
-'''
-delete all courses related to the current user
-'''
+
 def delete_all_courses(request):
+    '''
+    delete all courses related to the current user
+    '''
     try:
         courses = Course.objects.filter(user=request.user)
         courses.delete()
     except:
         pass # course doesn't exist
     
-    return HomePage(request)
+    return home_page_view(request)
 
-'''
-add new course object to the database
-'''
+
 def add_course(request):
+    '''
+    add new course object to the database
+    '''
     course = request.GET.get('course')
     section = request.GET.get('section')
     response_data = {}
@@ -122,7 +127,7 @@ def add_course(request):
             response_data['error_msg'] = 'Section ID is invalid!'
             return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
-
+    # Set URL for testudo course search, term, and other query data
     page_url = "https://ntst.umd.edu/soc/all-courses-search.html?course=" + course + "&section=" + section + "&term=201308&level=ALL"
     page = urllib2.urlopen(page_url).read()
     soup = BeautifulSoup(page)
@@ -192,7 +197,8 @@ def add_course(request):
             course_info['start_time']   = c.start_time.strftime("%H:%M")
             course_info['end_time']     = c.end_time.strftime("%H:%M")
             course_info['section_days'] = []
-            split_days(course_info['section_days'], c.section_days)
+            s = Scraper()
+            s.split_days(course_info['section_days'], c.section_days)
             course_info['user']         = c.user.username
             course_info['link']         = c.link
             course_info['tag']          = '' if c.tag == None else c.tag
@@ -213,82 +219,3 @@ def add_course(request):
     response_data['error'] = False
     response_data['error_msg'] = ''
     return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-def get_course(request):
-    course = request.GET.get('course')
-    section = request.GET.get('section')
-    response_data = {}
-
-    if course == None and section == None:
-        try:
-            resp = Course.objects.filter(user=User.objects.get(id = request.user.id))
-            response_data['courses'] = []
-            fill_table(response_data, resp)
-            response_data['error'] = False
-            response_data['error_msg'] = ''
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
-        except ObjectDoesNotExist:
-            response_data['error'] = True
-            response_data['error_msg'] = 'You must be logged in to add courses.'
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-    if course == None and section != None:
-        response_data['error'] = True
-        response_data['error_msg'] = 'You must enter a course!'
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-    elif course != None and section == None:
-        response_data['error'] = True
-        response_data['error_msg'] = 'You must enter a section!'
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-    if section != None and len(section) != 4:
-        if len(section) == 3:
-            section = "0" + section
-        else:
-            response_data['error'] = True
-            response_data['error_msg'] = 'That section ID is invalid!'
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-    try:
-        resp = Course.objects.filter(name=course, section=section, user=User.objects.get(id = request.user.id))
-    except ObjectDoesNotExist:
-        response_data['error'] = True
-        response_data['error_msg'] = 'That username does not exist!'
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-    if len(resp) == 0:
-        response_data['error'] = True
-        response_data['error_msg'] = 'That class or section was not found!'
-        return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-    response_data['courses'] = []
-    fill_table(response_data, resp)
-
-    return HttpResponse(json.dumps(response_data), mimetype="application/json")
-
-def fill_table(table, resp):
-    for r in resp:
-        course_info = {}
-        course_info['name']         = r.name
-        course_info['section']      = r.section
-        course_info['build_code']   = r.build_code
-        course_info['room_number']  = r.room_number
-        course_info['start_time']   = r.start_time.strftime("%H:%M")
-        course_info['end_time']     = r.end_time.strftime("%H:%M")
-        course_info['section_days'] = []
-        
-        split_days(course_info['section_days'], r.section_days)
-        
-        course_info['user']         = r.user.username
-        course_info['link']         = r.link
-        course_info['tag']          = r.tag
-        course_info['id']           = r.id
-        table['courses'].append(course_info)
-
-def split_days(table, section_days):
-    for i in range(0, len(section_days)):
-        if i+1 < len(section_days) and section_days[i+1].islower():
-            table.append(section_days[i] + section_days[i+1])
-            i += 2
-        elif not section_days[i].islower():
-            table.append(section_days[i])

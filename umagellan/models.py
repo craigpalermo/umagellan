@@ -21,13 +21,6 @@ class Course(models.Model):
     link = models.CharField(max_length=1024)
     def __unicode__(self):
         return self.name
-
-    
-# # the route that the user will take from start_location to end_location
-# class Route(models.Model):
-#     start = models.ForeignKey(Course, related_name = 'class_start_location')
-#     end = models.ForeignKey(Course, related_name = 'class_end_location')
-#     user = models.ForeignKey(User)
     
 # represents a point of interest
 class Spot(models.Model):

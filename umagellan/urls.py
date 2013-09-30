@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from umagellan.views import HomePage, UserCreate
+from umagellan.views import home_page_view, create_user
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -7,11 +7,11 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Load index page
-    url(r'^$', HomePage, name='home'),
+    url(r'^$', home_page_view, name='home'),
         
     # Course Actions
     url(r'^add_course', 'umagellan.views.add_course'),
-    url(r'^get_course', 'umagellan.views.get_course'),
+    url(r'^get_course', 'api.views.get_course_view'),
     url(r'^delete_course/(?P<course_id>\d+)/', 'umagellan.views.delete_course'),
     url(r'^delete_all_courses/$', 'umagellan.views.delete_all_courses', name='delete_all_courses'),
 
@@ -23,6 +23,6 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django_cas.views.logout', name = 'user_logout_page'),
     
     # User Actions
-    url(r'^user/create/$', UserCreate.as_view(), name = 'user_create_page'),
-    url(r'^user/sethome/$', 'umagellan.views.SetHome', name = 'set_user_home'),
+    url(r'^user/create/$', create_user.as_view(), name = 'user_create_page'),
+    url(r'^user/sethome/$', 'umagellan.views.set_home', name = 'set_user_home'),
 )
