@@ -10,8 +10,8 @@ urlpatterns = patterns('',
     url(r'^$', home_page_view, name='home'),
         
     # Course Actions
-    url(r'^add_course', 'umagellan.views.add_course'),
-    url(r'^get_course', 'api.views.get_course_view'),
+    url(r'^add_course/', 'umagellan.views.add_course'),
+    url(r'^get_courses/', 'api.views.get_courses_view'),
     url(r'^delete_course/(?P<course_id>\d+)/', 'umagellan.views.delete_course'),
     url(r'^delete_all_courses/$', 'umagellan.views.delete_all_courses', name='delete_all_courses'),
 

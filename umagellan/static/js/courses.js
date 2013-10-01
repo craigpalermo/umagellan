@@ -19,7 +19,7 @@ $(function() {
         // Append course to table
         if(course_name.length != 0 && course_sec.length != 0) {
             $.ajax({
-                url: '/add_course',
+                url: '/add_course/',
                 data: { course: course_name, section: course_sec }
             }).done(function(data) {
                 if(data.error == true) {
@@ -76,7 +76,7 @@ $(function() {
         }
     });
 
-    $.get('/get_courses', function(data, status) {
+    $.get('/get_courses/', function(data, status) {
         if (status === "success")
             addCoursesToHTML(data.courses);
     });

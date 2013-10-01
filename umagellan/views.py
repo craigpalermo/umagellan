@@ -128,7 +128,7 @@ def add_course(request):
             return HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     # Set URL for testudo course search, term, and other query data
-    page_url = "https://ntst.umd.edu/soc/all-courses-search.html?course=" + course + "&section=" + section + "&term=201308&level=ALL"
+    page_url = "https://ntst.umd.edu/soc/search?courseId=" + course + "&sectionId=" + section + "&termId=201308&_openSectionsOnly=on&courseLevelFilter=ALL&classStartTime=&_classDays=on&teachingCenter=ALL"
     page = urllib2.urlopen(page_url).read()
     soup = BeautifulSoup(page)
 

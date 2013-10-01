@@ -9,7 +9,7 @@ class Scraper:
     Contains methods that allow pulling course data from Testudo
     '''
 
-    def get_course(self, course, section, user_id):
+    def get_courses(self, course, section, user_id):
         '''
         Gets the location, start time, and end time for the given course and section;
         returns a JSON string with all of the data for the course
