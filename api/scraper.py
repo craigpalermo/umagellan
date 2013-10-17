@@ -15,10 +15,12 @@ class Scraper:
         returns a JSON string with all of the data for the course
         '''
         response_data = {}
+        user = User.objects.get(id=user_id)
     
         if course == None and section == None:
             try:
-                resp = Course.objects.filter(user=User.objects.get(id = user_id))
+                resp = user.profile.courses.all()
+                
                 response_data['courses'] = []
                 self.fill_table(response_data, resp)
                 response_data['error'] = False
@@ -47,7 +49,7 @@ class Scraper:
                 return HttpResponse(json.dumps(response_data), mimetype="application/json")
     
         try:
-            resp = Course.objects.filter(name=course, section=section, user=User.objects.get(id = user_id))
+            resp = user.profile.courses.all().filter(name=course, section=section)
         except ObjectDoesNotExist:
             response_data['error'] = True
             response_data['error_msg'] = 'That username does not exist!'
@@ -81,7 +83,6 @@ class Scraper:
             
             self.split_days(course_info['section_days'], r.section_days)
             
-            course_info['user']         = r.user.username
             course_info['link']         = r.link
             course_info['tag']          = r.tag
             course_info['id']           = r.id

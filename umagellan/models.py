@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     home = models.CharField(max_length=56)
+    courses = models.ManyToManyField("Course")
     
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
@@ -16,7 +17,6 @@ class Course(models.Model):
     start_time = models.DateTimeField(blank=True)
     end_time = models.DateTimeField(blank=True)
     section_days = models.CharField(max_length=10)
-    user = models.ForeignKey(User, related_name = 'users_courses')
     tag = models.CharField(max_length=56, null=True)
     link = models.CharField(max_length=1024)
     def __unicode__(self):

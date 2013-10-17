@@ -15,7 +15,9 @@ import json
 
 
 def home_page_view(request):
-    courses = Course.objects.filter(user = request.user.id)
+    profile = request.user.profile
+    courses = profile.courses.all()
+    
     routes = None
     days = [('Monday', 'M'), ('Tuesday', 'Tu'), ('Wednesday', 'W'), ('Thursday', 'Th'), ('Friday', 'F') ]
     
@@ -24,7 +26,7 @@ def home_page_view(request):
         home = request.user.profile.home
     else:
         home = ''
-        
+
     try:
         user = User.objects.get(id=request.user.id)
     except:
@@ -97,8 +99,9 @@ def delete_all_courses(request):
     delete all courses related to the current user
     '''
     try:
-        courses = Course.objects.filter(user=request.user)
-        courses.delete()
+        user = request.user.profile
+        user.courses.all().delete()
+        user.save()
     except:
         pass # course doesn't exist
     
@@ -109,12 +112,16 @@ def add_course(request):
     '''
     add new course object to the database
     '''
-    course = request.GET.get('course')
+    course = request.GET.get('course').upper()
     section = request.GET.get('section')
     response_data = {}
     course_info = {}
     response_data['error'] = False
     response_data['error_msg'] = ''
+
+    # add the course to the user's list of courses
+    user = UserProfile.objects.get(user=request.user)
+    profile = request.user.profile
 
     # print course
     # print section
@@ -153,42 +160,50 @@ def add_course(request):
     class_block = first_block.find('div', {'class' : 'class-days-container'})
     classes = class_block.findAll('div', {'class' : 'row'})
     response_data['courses'] = []
+    
+    # create the new course objects and add them to database
     for i in range(0, len(classes)):
-        c = Course()
-        c.name = course.upper()
-        c.section = section
-
-        room = classes[i].find('span', {'class' : 'class-room'}).text
-        
-        if room != None:
-            if room == 'ONLINE':
-                response_data['error'] = True
-                response_data['error_msg'] = 'You cannot add online classes!'
-                return HttpResponse(json.dumps(response_data), mimetype="application/json")
-            else:
-                c.room_number = room
-        
-        c.build_code = classes[i].find('span', {'class' : 'building-code'}).text
-        
-        class_start = classes[i].find('span', {'class' : 'class-start-time'}).text
-        c.start_time =  parser.parse(class_start)
-        
-        class_end = classes[i].find('span', {'class' : 'class-end-time'}).text
-        c.end_time = parser.parse(class_end)
-        
-        c.section_days = classes[i].find('span', {'class' : 'section-days'}).text
-        c.link = page_url
-
-
-        if classes[i].find('span', {'class' : 'class-type'}) != None:
-            c.tag = classes[i].find('span', {'class' : 'class-type'}).text
         try:
-            c.user = User.objects.get(id = request.user.id)
-        except ObjectDoesNotExist:
-            response_data['error'] = True
-            response_data['error_msg'] = 'You must be logged in to add courses.'
-            return HttpResponse(json.dumps(response_data), mimetype="application/json")
-        if Course.objects.filter(name=c.name, start_time=c.start_time, section_days=c.section_days, user=c.user).exists() != True:
+            # set c to the matching course if it exists in DB
+            room = classes[i].find('span', {'class' : 'class-room'}).text
+            c = Course.objects.get(name=course, section=section, room_number=room)
+        except: 
+            # course does not exist in DB, create new course and add it to DB
+            c = Course()
+            c.name = course.upper()
+            c.section = section
+    
+            room = classes[i].find('span', {'class' : 'class-room'}).text
+            
+            if room != None:
+                if room == 'ONLINE':
+                    response_data['error'] = True
+                    response_data['error_msg'] = 'You cannot add online classes!'
+                    return HttpResponse(json.dumps(response_data), mimetype="application/json")
+                else:
+                    c.room_number = room
+            
+            c.build_code = classes[i].find('span', {'class' : 'building-code'}).text
+            
+            class_start = classes[i].find('span', {'class' : 'class-start-time'}).text
+            c.start_time =  parser.parse(class_start)
+            
+            class_end = classes[i].find('span', {'class' : 'class-end-time'}).text
+            c.end_time = parser.parse(class_end)
+            
+            c.section_days = classes[i].find('span', {'class' : 'section-days'}).text
+            c.link = page_url
+
+            if classes[i].find('span', {'class' : 'class-type'}) != None:
+                c.tag = classes[i].find('span', {'class' : 'class-type'}).text
+            
+            c.save()
+        
+        # add course to user's list of courses
+        if not c in profile.courses.all():
+            user.courses.add(c)
+            user.save()
+    
             course_info = {}
             course_info['name']         = c.name
             course_info['section']      = c.section
@@ -199,17 +214,15 @@ def add_course(request):
             course_info['section_days'] = []
             s = Scraper()
             s.split_days(course_info['section_days'], c.section_days)
-            course_info['user']         = c.user.username
             course_info['link']         = c.link
             course_info['tag']          = '' if c.tag == None else c.tag
-            c.save()
             course_info['id']           = c.id
             response_data['courses'].append(course_info)
             response_data['error'] = False
             response_data['error_msg'] = ''
         else:
             response_data['error'] = True
-            response_data['error_msg'] = 'That course already exists!'
+            response_data['error_msg'] = 'Course already added!'
             errorResponse = HttpResponse(json.dumps(response_data), mimetype="application/json")
 
     if response_data['error']:
